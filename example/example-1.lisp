@@ -14,21 +14,20 @@
 
 (defun main ()
   (cl-java-sound-client-logger:set-log-level :info)
-  (let ((rack (make-rack)))
-    (let ((my-controller
-	    (make-instance
-	     'cl-synthesizer-controller
-	     :rack rack
-	     :output-sockets '(("OUTPUT" :input-socket :sine))
-	     :duration-seconds 5
-	     :sample-width :16Bit
-	     :v-peak 5.0)))
-      (cl-java-sound-client:connect
-       my-controller
-       :port 9000
-       :host "localhost"
-       :buffer-size-frames 10000
-       :omit-audio-output nil)
-      (cl-java-sound-client:run my-controller))))
+  (let ((my-controller
+	  (make-instance
+	   'cl-synthesizer-controller
+	   :rack (make-rack)
+	   :output-sockets '(("OUTPUT" :input-socket :sine))
+	   :duration-seconds 5
+	   :sample-width :16Bit
+	   :v-peak 5.0)))
+    (cl-java-sound-client:connect
+     my-controller
+     :port 9000
+     :host "localhost"
+     :buffer-size-frames 10000
+     :omit-audio-output nil)
+    (cl-java-sound-client:run my-controller)))
 
 ;;(main)
