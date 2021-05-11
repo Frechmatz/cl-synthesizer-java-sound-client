@@ -1,4 +1,3 @@
 (defpackage :cl-synthesizer-java-sound-client
-  (:use :cl)
-  (:export
-))
+  (:use :cl :cl-java-sound-client)
+  (:export :cl-synthesizer-controller))
