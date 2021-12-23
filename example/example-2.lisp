@@ -4,9 +4,7 @@
   "Frequency modulated saw"
   (declare (ignore name))
   (let ((voice
-      (cl-synthesizer:make-rack
-       :environment environment
-       :output-sockets '(:audio))))
+      (cl-synthesizer:make-rack :environment environment)))
 
     (cl-synthesizer:add-module
      voice "LFO"
@@ -19,20 +17,20 @@
      :base-frequency vco-frequency :v-peak 5.0 :cv-lin-hz-v 20.0)
 
     (cl-synthesizer:add-patch voice "LFO" :sine "VCO" :cv-lin)
-    (cl-synthesizer:add-patch voice "VCO" :saw "OUTPUT" :audio)
-    
+    (cl-synthesizer:expose-output-socket voice :audio "VCO" :saw)
+
     voice))
 
 (defun make-rack ()
   (let ((rack (cl-synthesizer:make-rack
-               :environment (cl-synthesizer:make-environment)
-	       :output-sockets '(:left :right))))
+               :environment (cl-synthesizer:make-environment))))
     (cl-synthesizer:add-module
      rack "VOICE-1" #'make-voice :lfo-frequency 1.0 :vco-frequency 440.0)
     (cl-synthesizer:add-module
      rack "VOICE-2" #'make-voice :lfo-frequency 2.0 :vco-frequency 442.0)
-    (cl-synthesizer:add-patch rack "VOICE-1" :audio "OUTPUT" :left)
-    (cl-synthesizer:add-patch rack "VOICE-2" :audio "OUTPUT" :right)
+
+    ;; (cl-synthesizer:expose-output-socket rack :left "VOICE-1" :audio)
+    ;; (cl-synthesizer:expose-output-socket rack :right "VOICE-2" :audio)
     rack))
 
 (defun main ()
@@ -42,8 +40,8 @@
 	   'cl-synthesizer-controller
 	   :rack (make-rack)
 	   :output-sockets
-	   '(("OUTPUT" :input-socket :left)
-	     ("OUTPUT" :input-socket :right))
+	   '(("VOICE-1" :output-socket :audio)
+	     ("VOICE-2" :output-socket :audio))
 	   :duration-seconds 5
 	   :sample-width :16Bit
 	   :v-peak 5.0)))

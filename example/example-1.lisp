@@ -2,14 +2,13 @@
 
 (defun make-rack ()
   (let ((rack (cl-synthesizer:make-rack
-               :environment (cl-synthesizer:make-environment)
-	       :output-sockets '(:sine))))
+               :environment (cl-synthesizer:make-environment))))
     (cl-synthesizer:add-module
      rack
      "VCO"
      #'cl-synthesizer-modules-vco:make-module
      :base-frequency 440.0 :v-peak 5.0)
-    (cl-synthesizer:add-patch rack "VCO" :sine "OUTPUT" :sine)
+    ;;(cl-synthesizer:expose-output-socket rack :sine "VCO" :sine)
     rack))
 
 (defun main ()
@@ -18,7 +17,7 @@
 	  (make-instance
 	   'cl-synthesizer-controller
 	   :rack (make-rack)
-	   :output-sockets '(("OUTPUT" :input-socket :sine))
+	   :output-sockets '(("VCO" :output-socket :sine))
 	   :duration-seconds 5
 	   :sample-width :16Bit
 	   :v-peak 5.0)))
